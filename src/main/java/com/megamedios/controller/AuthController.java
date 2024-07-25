@@ -1,5 +1,6 @@
 package com.megamedios.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +18,8 @@ import com.megamedios.response.AuthResponse;
 import com.megamedios.security.jwt.JwtUtils;
 import com.megamedios.service.UserService;
 import com.megamedios.entities.User;
+import com.megamedios.exception.UserException;
+
 import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
@@ -49,4 +52,14 @@ public class AuthController {
 		return ResponseEntity.ok(authResponse);
 	}
 
+	@PostMapping("/register")
+	public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
+		try {
+			userService.saveUser(user);
+			return ResponseEntity.ok("Usuario Registrado!");
+		}catch(UserException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+		}
+		
+	}
 }
